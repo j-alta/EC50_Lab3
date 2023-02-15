@@ -1,0 +1,38 @@
+---
+title: "Lab 3"
+output: pdf_document
+date: "2023-02-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#loading required packages and dataset
+library(tidyverse)
+library(haven)
+library(ggthemes)
+library(statar) 
+library(tidyquant)
+mto <- read_dta("mto.dta")
+view(mto)
+
+
+
+```
+
+***Question 1***
+
+
+Briefly summarize the results from the lecture on the Moving to Opportunity Experiment. What
+were the results for individuals who were young children in 1994-1998? What were the results
+for older children and adults in 1994-1998? 
+
+
+
+```{r q2}
+
+
+
+
+
+```
+

@@ -20,16 +20,33 @@ view(mto)
 ```
 
 ***Question 1***
-
-
-Briefly summarize the results from the lecture on the Moving to Opportunity Experiment. What
-were the results for individuals who were young children in 1994-1998? What were the results
-for older children and adults in 1994-1998? 
-
+The results from the Moving to Opportunity Experiment found a statistically significant positive relationship between higher earnings and having lived in a household that had an experimental voucher compared to a household with a Section 8 voucher and the control group for individuals who were young children in 94-98. The study found as similar positive, statistically significant relationship with college attendance and a negative, statistically significant relationship between living in an experimental voucher household and living in a high poverty % ZIP tract as an adult and single parenthood.However, the study found little evidence of higher earnings among adults who took part in the experiment in 94-98.  
 
 
 ```{r q2}
 
+mto1 <- mto |> 
+        filter(voucher == 0)
+
+mean(mto1$moved)
+
+
+
+
+```
+
+The mean for `moved` for observations with voucher equal to 0 is, obviously, 0, because it makes sense that people who were in the control group did not use the experimental housing voucher.
+
+```{r q3}
+
+mto2 <- mto |> 
+        filter(voucher == 1)
+
+mean(mto2$moved)
+```
+The mean for `moved` for observations in the experimental group, otherwise known as the compliance rate, is 43%.
+
+```{r q4}
 
 
 

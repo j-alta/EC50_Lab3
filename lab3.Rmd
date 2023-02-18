@@ -30,9 +30,6 @@ mto1 <- mto |>
 
 mean(mto1$moved)
 
-
-
-
 ```
 
 The mean for `moved` for observations with voucher equal to 0 is, obviously, 0, because it makes sense that people who were in the control group did not use the experimental housing voucher.
@@ -48,8 +45,128 @@ The mean for `moved` for observations in the experimental group, otherwise known
 
 ```{r q4}
 
+mod1 = lm(moved ~ voucher, data = mto)
+summary(mod1)
+
+
+```
+According to the regression's coefficient for `voucher`, the effect of taking the voucher increases the likelhood of moving by .4306, or very similar if not the same to the reported mean from question 3.
+
+***Question 5***
+The previous questions tell us that there is non-compliance; only about 43% of the experimental group ended up moving after receiving the intervention (the vouchers). This non-compliance is one-sided, since the control group was restricted from receiving the intervention in the first place.
+
+```{r q6}
+
+mod2 = lm(kessler ~ voucher, data = mto)
+summary(mod2)
+
+```
+There is a statistically significant negative relationship between the intent to treat effect of the experimental voucher on the Kessler index score, albeit a small one (-0.588). 
+
+```{r q7}
+
+#Calculate the TOT effect by dividing the ITT of receiving the voucher by the complaince rate
+
+ITT <- as.numeric(mod2$coefficients) [2]
+compliancerate <- as.numeric(mod1$coefficients) [2]
+
+TOT <- ITT/compliancerate
+TOT
+
+```
+Dividing the ITT (-0.588) by the compliance rate (.43) gives us the TOT of -1.365. In other words, the treatment of the treated effect of those that actually moved using the voucher on the Kessler index is a decrease of 1.36, a higher effect than the original ITT.
+
+```{r q8}
+
+#kessler mean for those who moved
+mto3 <- mto |> 
+        filter(moved == 0)
+
+mean(mto1$kessler)
+
+#kessler mean for those who did not move
+mto4 <- mto |> 
+        filter(moved == 1)
+
+mean(mto2$kessler)
+
+
+```
+The as-treated analysis suggests that those who did move have a slightly lower Kessler index average score, 6.29 compared to 6.88.
+
+```{r q9}
+
+mto5 <- mto |> 
+        filter(voucher == 0)
+mean(mto5$kessler) 
+
+mto6 <- mto |> 
+        filter(voucher == 1 & moved == 1)
+
+mean(mto6$kessler) 
+
+```
+The per-protocol analysis suggests that the average Kessler index for those in the control group is 6.88 (same as before), while for the experimental group, solely among those who moved, is 6.15.
+
+***Question 10***
+The correct TOT effect yields the biggest estimate, with a 1.36 point decrease on the Kessler index, compared to the as treated estimated effect of a .59 decrease and the per protocl estimated effect of a .73 decrease.
+
+***Question 11***
+The as treated approach leads to a biased estimate because the independent variable is non-random - it compares the difference in the Kessler score of those who moved and those who did not move, which is affected by the compliance rate, subject to confounding variables. The per protocol approach is also biased because by dropping observations that did not move, we are biasing the TOT effect. The TOT leads to valid inference about the impact of MTO on the Kessler score/psychological distress because it accounts for noncompliance rates when deriving upsilon 1. 
+
+```{r q12}
+
+#graph 1: Control and Experiment Moved Rates 
+
+df <- data.frame(c(0, 0.43), c("Control Group", "Treatment Group"))
+names(df)[1] <- "Moved"
+names(df)[2] <- "Group"
+ggplot(data=df, aes(x=Group, y=Moved, fill=Group, label = scales::percent(Moved))) +
+ geom_bar(stat="identity", show.legend = FALSE, width=.6) +
+ scale_fill_manual(values=c("red", "blue")) +
+ labs(y = "Moved Using Experimental Voucher", x = "",
+      title = "MTO Experiment",
+      subtitle = "Compliance Rate") +
+  geom_text(position = position_dodge(width = .9),    # move to center of bars
+              vjust = -0.5,    # nudge above top of bar
+              size = 3)
+ggsave("fig1.png")
+
+
+#graph 2: Control and Treatment Kessler Means (ITT) 
+
+df <- data.frame(c(6.88, 6.30), c("Control Group", "Treatment Group"))
+names(df)[1] <- "Moved"
+names(df)[2] <- "Group"
+ggplot(data=df, aes(x=Group, y=Moved, fill=Group, label = Moved)) +
+ geom_bar(stat="identity", show.legend = FALSE, width=.6) +
+ scale_fill_manual(values=c("red", "blue")) +
+ labs(y = "Kessler Average", x = "",
+      title = "Kessler Average Mean",
+      subtitle = "ITT Effect Estimate") +
+  geom_text(position = position_dodge(width = .9),    # move to center of bars
+              vjust = -0.5,    # nudge above top of bar
+              size = 3)
+ggsave("fig2.png")
+
+#graph 3: Control and Treatment Kessler Means (TOT)
+
+df <- data.frame(c(6.88, 5.52), c("Control Group", "Treatment Group"))
+names(df)[1] <- "Moved"
+names(df)[2] <- "Group"
+ggplot(data=df, aes(x=Group, y=Moved, fill=Group, label = Moved)) +
+ geom_bar(stat="identity", show.legend = FALSE, width=.6) +
+ scale_fill_manual(values=c("red", "blue")) +
+ labs(y = "Kessler Average", x = "",
+      title = "Kessler Average Mean",
+      subtitle = "TOT Effect Estimate") +
+  geom_text(position = position_dodge(width = .9),    # move to center of bars
+              vjust = -0.5,    # nudge above top of bar
+              size = 3)
+ggsave("fig3.png")
 
 
 
 ```
+
 
